@@ -13,7 +13,7 @@ function registrar(event) {
     loading(() => {
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(() => {
-                window.location.href = "/index/pages/home.html";
+                window.location.href = "/Login-and-Calendar-dynamic/index/pages/home.html";
             })
             .catch(error => {
                 console.log(error);

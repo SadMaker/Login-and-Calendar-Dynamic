@@ -12,7 +12,7 @@ function login(event) {
     firebase.auth().signInWithEmailAndPassword(email, password).then((response) =>{
         loading(() =>{
             console.log("sucesso", response);
-            window.location.href = "/index/pages/home.html";
+            window.location.href = "/Login-and-Calendar-dynamic/index.html";
         })
     }).catch(error =>{
         loading(() =>{

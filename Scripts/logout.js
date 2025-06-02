@@ -4,7 +4,7 @@ function logout(event) {
     firebase.auth().signOut()
         .then(() => {
             localStorage.removeItem("rememberMe");
-            window.location.href = "/index/pages/index.html";
+            window.location.href = "/Login-and-Calendar-dynamic/index.html"; // ajuste aqui
         })
         .catch(error => {
             console.error("Erro ao deslogar:", error);
