@@ -4,7 +4,7 @@ function logout(event) {
     firebase.auth().signOut()
         .then(() => {
             localStorage.removeItem("rememberMe");
-            window.location.href = "../../index.html";
+            window.location.href = "../index.html";
         })
         .catch(error => {
             console.error("Erro ao deslogar:", error);
