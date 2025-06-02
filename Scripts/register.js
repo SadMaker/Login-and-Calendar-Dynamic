@@ -15,6 +15,7 @@ function registrar(event) {
         return;
     }
 
+    
     loading(() => {
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(() => {
