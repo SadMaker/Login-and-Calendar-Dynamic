@@ -409,8 +409,18 @@ addEventSubmit.addEventListener("click", () => {
   addEventFrom.value = "";
   addEventTo.value = "";
   updateEvents(activeDay);
-  initCalendar(); // <- Garante atualização visual do calendário (barrinha)
-
+  // Atualiza o calendário visual (barrinha) sem perder o dia ativo
+  const prevActiveDay = activeDay;
+  initCalendar();
+  // Restaura o dia ativo após o redraw
+  setTimeout(() => {
+    const days = document.querySelectorAll(".day");
+    days.forEach((day) => {
+      if (Number(day.textContent) === prevActiveDay && !day.classList.contains("prev-date") && !day.classList.contains("next-date")) {
+        day.classList.add("active");
+      }
+    });
+  }, 10);
   // Salva no localStorage e no Firestore em background
   saveEvents(); 
 });
