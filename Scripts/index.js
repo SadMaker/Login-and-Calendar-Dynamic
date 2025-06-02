@@ -12,7 +12,7 @@ function login(event) {
     firebase.auth().signInWithEmailAndPassword(email, password).then((response) =>{
         loading(() =>{
             console.log("sucesso", response);
-            window.location.href = "/Login-and-Calendar-dynamic/index.html";
+            window.location.href = "index.html";
         })
     }).catch(error =>{
         loading(() =>{
@@ -33,7 +33,7 @@ function forget(event){
     else{
         loading(() => {
             firebase.auth().sendPasswordResetEmail(email).then(() =>{
-            showNotification("Enviamos um email para recuperação de senha.", "/index/pages/index.html");
+            showNotification("Enviamos um email para recuperação de senha.", "../index.html");
             
         }).catch(error => {
                 console.log("erro", error);
@@ -46,6 +46,6 @@ function forget(event){
 firebase.auth().onAuthStateChanged(user => {
     const remember = localStorage.getItem("rememberMe") === "true";
     if (user && remember) {
-        window.location.href = "/index/pages/home.html";
+        window.location.href = "pages/home.html";
     }
 });

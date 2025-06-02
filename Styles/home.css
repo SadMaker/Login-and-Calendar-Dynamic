@@ -27,7 +27,7 @@ body {
   align-items: center;
   justify-content: center;
   padding-bottom: 30px;
-  background: url(/index/Assets/img/background.png);
+  background: url(../index/Assets/img/background.png);
 }
 .container {
   position: relative;
