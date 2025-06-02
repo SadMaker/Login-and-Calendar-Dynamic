@@ -380,8 +380,6 @@ addEventSubmit.addEventListener("click", () => {
     title: eventTitle,
     time: timeText,
   };
-  console.log(newEvent);
-  console.log(activeDay);
   let eventAdded = false;
   if (eventsArr.length > 0) {
     eventsArr.forEach((item) => {
@@ -405,12 +403,14 @@ addEventSubmit.addEventListener("click", () => {
     });
   }
 
-  console.log(eventsArr);
+  // Atualiza a UI imediatamente
   addEventWrapper.classList.remove("active");
   addEventTitle.value = "";
   addEventFrom.value = "";
   addEventTo.value = "";
   updateEvents(activeDay);
+
+  // Salva no localStorage e no Firestore em background
   saveEvents(); 
 });
 
