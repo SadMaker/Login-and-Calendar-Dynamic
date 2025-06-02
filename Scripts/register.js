@@ -19,7 +19,7 @@ function registrar(event) {
     loading(() => {
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(() => {
-                window.location.href = "/super-duper-octo-rotary-phone/index/pages/home.html";
+                window.location.href = "./home.html";
             })
             .catch(error => {
                 console.log(error);

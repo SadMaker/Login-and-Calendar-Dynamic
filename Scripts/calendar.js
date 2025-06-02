@@ -482,9 +482,13 @@ function saveEvents() {
 function getEvents(callback) {
   // Tenta carregar do localStorage primeiro
   const localData = localStorage.getItem("eventsArr");
-  if (localData) {
+  if (localData && localData !== "[]") {
     eventsArr.length = 0;
-    eventsArr.push(...JSON.parse(localData));
+    try {
+      eventsArr.push(...JSON.parse(localData));
+    } catch (e) {
+      localStorage.removeItem("eventsArr");
+    }
     if (typeof callback === "function") callback();
     return;
   }
@@ -516,9 +520,14 @@ function getEvents(callback) {
     });
 }
 
+// Limpa o localStorage ao deslogar
+function clearEventsLocalStorage() {
+  localStorage.removeItem("eventsArr");
+}
+
 // Limpa o localStorage ao sair da página
 window.addEventListener("beforeunload", () => {
-  localStorage.removeItem("eventsArr");
+  // Não limpe o localStorage ao sair da página, só ao deslogar
 });
 
 function convertTime(time) {
