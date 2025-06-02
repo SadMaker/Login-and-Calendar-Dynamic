@@ -10,10 +10,15 @@ function registrar(event) {
         return;
     }
 
+    if (password.length < 6) {
+        showError("A senha deve ter pelo menos 6 dígitos!");
+        return;
+    }
+
     loading(() => {
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(() => {
-                window.location.href = "../home.html";
+                window.location.href = "/super-duper-octo-rotary-phone/index/pages/home.html";
             })
             .catch(error => {
                 console.log(error);
