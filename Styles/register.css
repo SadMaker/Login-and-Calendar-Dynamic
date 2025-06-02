@@ -169,3 +169,45 @@ body{
         transform: translateY(50px);
     }
 }
+
+@media (max-width: 500px) {
+  .container {
+    width: 98vw;
+    min-width: unset;
+    padding: 10px 2vw;
+  }
+  .container h1 {
+    font-size: 1.5rem;
+  }
+  .input-box {
+    margin: 18px 0;
+    height: 40px;
+  }
+  .input-box input {
+    font-size: 0.95rem;
+    padding: 12px 35px 12px 12px;
+  }
+  .input-box i {
+    font-size: 1.1rem;
+    right: 12px;
+  }
+  .registrar, .login {
+    height: 40px;
+    font-size: 1rem;
+    border-radius: 30px;
+  }
+  .register-link {
+    font-size: 12px;
+    margin: 10px 0 10px;
+  }
+}
+
+@media (max-width: 350px) {
+  .container {
+    padding: 2px 1vw;
+  }
+  .input-box input {
+    font-size: 0.8rem;
+    padding: 8px 20px 8px 8px;
+  }
+}
