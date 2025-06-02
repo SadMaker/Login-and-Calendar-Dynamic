@@ -12,7 +12,7 @@ function login(event) {
     firebase.auth().signInWithEmailAndPassword(email, password).then((response) =>{
         loading(() =>{
             console.log("sucesso", response);
-            window.location.href = "index.html";
+            window.location.href = "./index.html";
         })
     }).catch(error =>{
         loading(() =>{
@@ -20,7 +20,6 @@ function login(event) {
             showError("Email ou senha inválidos!");
         })
      });
-      
 };
 
 function forget(event){
