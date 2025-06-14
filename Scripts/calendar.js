@@ -47,6 +47,8 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
+let isFirstLoad = true; // Adicione esta variável global
+
 function initCalendar() {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
@@ -75,7 +77,10 @@ function initCalendar() {
         event = true;
       }
     });
+
+    // Aqui está a lógica alterada:
     if (
+      isFirstLoad &&
       i === new Date().getDate() &&
       year === new Date().getFullYear() &&
       month === new Date().getMonth()
@@ -87,6 +92,14 @@ function initCalendar() {
         days += `<div class="day today active event">${i}</div>`;
       } else {
         days += `<div class="day today active">${i}</div>`;
+      }
+    } else if (!isFirstLoad && i === activeDay) {
+      getActiveDay(i);
+      updateEvents(i);
+      if (event) {
+        days += `<div class="day active event">${i}</div>`;
+      } else {
+        days += `<div class="day active">${i}</div>`;
       }
     } else {
       if (event) {
@@ -102,6 +115,9 @@ function initCalendar() {
   }
   daysContainer.innerHTML = days;
   addListner();
+
+  // Depois da primeira vez, marque como carregado
+  isFirstLoad = false;
 }
 
 function prevMonth() {
