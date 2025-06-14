@@ -98,7 +98,7 @@ function showNotification(message, redirectUrl = null) {
     textAlign: 'center',
   });
   const title = document.createElement('h2');
-  title.textContent = 'Aviso';
+  title.textContent = 'Notificação';
   title.style.marginBottom = '16px';
   title.style.fontSize = '28px';
   title.style.fontWeight = '700';
@@ -122,16 +122,6 @@ function showNotification(message, redirectUrl = null) {
     transition: '0.5s',
     marginTop: '10px'
   });
-  btn.onmouseenter = () => {
-    btn.style.backgroundColor = 'transparent';
-    btn.style.border = '2px solid rgba(255,255,255,.2)';
-    btn.style.color = '#fff';
-  };
-  btn.onmouseleave = () => {
-    btn.style.backgroundColor = '#fff';
-    btn.style.border = 'none';
-    btn.style.color = '#333';
-  };
   btn.onclick = () => {
     modal.remove();
     if (redirectUrl) {

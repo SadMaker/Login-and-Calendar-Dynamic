@@ -47,7 +47,7 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
-let isFirstLoad = true; // Adicione esta variável global
+let isFirstLoad = true;
 
 function initCalendar() {
   const firstDay = new Date(year, month, 1);
@@ -78,7 +78,6 @@ function initCalendar() {
       }
     });
 
-    // Aqui está a lógica alterada:
     if (
       isFirstLoad &&
       i === new Date().getDate() &&
@@ -116,7 +115,6 @@ function initCalendar() {
   daysContainer.innerHTML = days;
   addListner();
 
-  // Depois da primeira vez, marque como carregado
   isFirstLoad = false;
 }
 
@@ -190,6 +188,7 @@ todayBtn.addEventListener("click", () => {
   today = new Date();
   month = today.getMonth();
   year = today.getFullYear();
+  isFirstLoad = true; 
   initCalendar();
 });
 
@@ -387,10 +386,8 @@ addEventSubmit.addEventListener("click", () => {
   addEventFrom.value = "";
   addEventTo.value = "";
 
-  updateEvents(activeDay); // Atualiza a lista de eventos exibida para o dia ativo
+  updateEvents(activeDay);
 
-  // Encontrar o elemento do dia ativo no DOM e adicionar a classe 'event'
-  // para que o CSS possa aplicar o estilo da barrinha.
   const daysInDOM = document.querySelectorAll(".days .day");
   daysInDOM.forEach((dayElement) => {
     if (
@@ -404,7 +401,7 @@ addEventSubmit.addEventListener("click", () => {
     }
   });
 
-  saveEvents(); // Salva no Firebase e localStorage. Não chama initCalendar.
+  saveEvents();
 });
 
 eventsContainer.addEventListener("click", (e) => {
