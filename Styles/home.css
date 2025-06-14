@@ -463,6 +463,126 @@ body {
   background-color: transparent;
   color: var(--primary-clr);
 }
+
+/* Estilos para o modal de código da turma */
+.class-code-modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1000; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgba(0,0,0,0.6); 
+}
+
+.class-code-modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; 
+  padding: 25px;
+  border: 1px solid #888;
+  width: 80%; 
+  max-width: 450px;
+  border-radius: 10px;
+  color: #333;
+  text-align: center;
+}
+
+.class-code-modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--primary-clr);
+}
+
+.class-code-modal-content label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.class-code-modal-content input[type="text"] {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.class-code-modal-buttons button {
+  padding: 10px 15px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+#confirm-class-code-btn {
+  background-color: var(--primary-clr);
+  color: white;
+}
+
+#confirm-class-code-btn:hover {
+  background-color: #1a237e; /* Um tom mais escuro de azul */
+}
+
+#cancel-class-code-btn {
+  background-color: #f44336; /* Vermelho */
+  color: white;
+}
+
+#cancel-class-code-btn:hover {
+  background-color: #d32f2f; /* Vermelho mais escuro */
+}
+
+#leave-class-btn {
+  background-color: #757575; /* Cinza */
+  color: white;
+  margin-top: 10px; /* Espaçamento se estiver visível */
+}
+
+#leave-class-btn:hover {
+  background-color: #424242; /* Cinza mais escuro */
+}
+
+#class-code-error {
+  color: #f44336; /* Vermelho */
+  margin-top: 10px;
+  font-size: 0.9em;
+  min-height: 1.2em; /* Para evitar que o layout salte */
+}
+
+/* Ajustes no botão Entrar na Turma para se alinhar com o botão de logout */
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaço entre os botões */
+    position: absolute; /* Ou ajuste conforme o layout do logout */
+    top: 20px; /* Exemplo, ajuste conforme necessário */
+    right: 20px; /* Exemplo, ajuste conforme necessário */
+}
+
+.user-actions button {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border: 1px solid var(--primary-clr);
+    background-color: transparent;
+    color: var(--primary-clr);
+}
+
+.user-actions button:hover {
+    background-color: var(--primary-clr);
+    color: #fff;
+}
+
+
 @media screen and (max-width: 1000px) {
   body {
     align-items: flex-start;
