@@ -6,5 +6,4 @@ function teste(){
         const eventos = console.log(snapshot.docs.map(doc => doc.data()));
     })
 }
-
 teste()

@@ -22,7 +22,6 @@ let activeDay;
 let month = today.getMonth();
 let year = today.getFullYear();
 
-// Meses em português
 const months = [
   "Janeiro",
   "Fevereiro",
@@ -38,27 +37,8 @@ const months = [
   "Dezembro",
 ];
 
-// const eventsArr = [
-//   {
-//     day: 13,
-//     month: 11,
-//     year: 2022,
-//     events: [
-//       {
-//         title: "Event 1 lorem ipsun dolar sit genfa tersd dsad ",
-//         time: "10:00 AM",
-//       },
-//       {
-//         title: "Event 2",
-//         time: "11:00 AM",
-//       },
-//     ],
-//   },
-// ];
-
 const eventsArr = [];
 
-// Inicializa calendário só após login e eventos carregados
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
     getEvents(() => {
@@ -67,7 +47,6 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
-//function to add days in days with class day and prev-date next-date on previous month and next month days and active on today
 function initCalendar() {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
@@ -86,7 +65,6 @@ function initCalendar() {
   }
 
   for (let i = 1; i <= lastDate; i++) {
-    //check if event is present on that day
     let event = false;
     eventsArr.forEach((eventObj) => {
       if (
@@ -126,7 +104,6 @@ function initCalendar() {
   addListner();
 }
 
-//function to add month and year on prev and next button
 function prevMonth() {
   month--;
   if (month < 0) {
@@ -150,7 +127,6 @@ next.addEventListener("click", nextMonth);
 
 initCalendar();
 
-//function to add active on day
 function addListner() {
   const days = document.querySelectorAll(".day");
   days.forEach((day) => {
@@ -158,16 +134,12 @@ function addListner() {
       getActiveDay(e.target.innerHTML);
       updateEvents(Number(e.target.innerHTML));
       activeDay = Number(e.target.innerHTML);
-      //remove active
       days.forEach((day) => {
         day.classList.remove("active");
       });
-      //if clicked prev-date or next-date switch to that month
       if (e.target.classList.contains("prev-date")) {
         prevMonth();
-        //add active to clicked day afte month is change
         setTimeout(() => {
-          //add active where no prev-date or next-date
           const days = document.querySelectorAll(".day");
           days.forEach((day) => {
             if (
@@ -180,7 +152,6 @@ function addListner() {
         }, 100);
       } else if (e.target.classList.contains("next-date")) {
         nextMonth();
-        //add active to clicked day afte month is changed
         setTimeout(() => {
           const days = document.querySelectorAll(".day");
           days.forEach((day) => {
@@ -236,7 +207,6 @@ function gotoDate() {
   showError("Data inválida");
 }
 
-//function update events when a day is active
 function updateEvents(date) {
   let events = "";
   eventsArr.forEach((event) => {
@@ -266,7 +236,6 @@ function updateEvents(date) {
   eventsContainer.innerHTML = events;
 }
 
-//function to add event
 addEventBtn.addEventListener("click", () => {
   addEventWrapper.classList.toggle("active");
 });
@@ -281,12 +250,10 @@ document.addEventListener("click", (e) => {
   }
 });
 
-//allow 50 chars in eventtitle
 addEventTitle.addEventListener("input", (e) => {
   addEventTitle.value = addEventTitle.value.slice(0, 60);
 });
 
-//allow only time in eventtime from and to
 addEventFrom.addEventListener("input", (e) => {
   addEventFrom.value = addEventFrom.value.replace(/[^0-9:]/g, "");
   if (addEventFrom.value.length === 2) {
@@ -307,7 +274,6 @@ addEventTo.addEventListener("input", (e) => {
   }
 });
 
-//function to add event to eventsArr
 addEventSubmit.addEventListener("click", () => {
   const eventTitle = addEventTitle.value;
   const eventTimeFrom = addEventFrom.value;
@@ -317,10 +283,6 @@ addEventSubmit.addEventListener("click", () => {
     return;
   }
 
-  // Remova a validação obrigatória das horas:
-  // Se quiser, pode validar apenas se algum dos campos de hora estiver preenchido, mas não obrigar.
-
-  // Se quiser validar formato apenas se o campo não estiver vazio:
   if (eventTimeFrom) {
     const timeFromArr = eventTimeFrom.split(":");
     if (
@@ -343,11 +305,9 @@ addEventSubmit.addEventListener("click", () => {
       return;
     }
   }
-
   const timeFrom = eventTimeFrom ? convertTime(eventTimeFrom) : "";
   const timeTo = eventTimeTo ? convertTime(eventTimeTo) : "";
 
-  //check if event is already added
   let eventExist = false;
   eventsArr.forEach((event) => {
     if (
@@ -366,7 +326,6 @@ addEventSubmit.addEventListener("click", () => {
     showError("Evento já adicionado");
     return;
   }
-  // Monta o texto do horário apenas se houver algum preenchido
   let timeText = "";
   if (timeFrom && timeTo) {
     timeText = timeFrom + " - " + timeTo;
@@ -374,7 +333,7 @@ addEventSubmit.addEventListener("click", () => {
     timeText = timeFrom;
   } else if (timeTo) {
     timeText = timeTo;
-  } // se nenhum, fica vazio
+  }
 
   const newEvent = {
     title: eventTitle,
@@ -393,7 +352,6 @@ addEventSubmit.addEventListener("click", () => {
       }
     });
   }
-
   if (!eventAdded) {
     eventsArr.push({
       day: activeDay,
@@ -403,16 +361,13 @@ addEventSubmit.addEventListener("click", () => {
     });
   }
 
-  // Atualiza a UI imediatamente
   addEventWrapper.classList.remove("active");
   addEventTitle.value = "";
   addEventFrom.value = "";
   addEventTo.value = "";
   updateEvents(activeDay);
-  // Atualiza o calendário visual (barrinha) sem perder o dia ativo
   const prevActiveDay = activeDay;
   initCalendar();
-  // Restaura o dia ativo após o redraw
   setTimeout(() => {
     const days = document.querySelectorAll(".day");
     days.forEach((day) => {
@@ -421,11 +376,9 @@ addEventSubmit.addEventListener("click", () => {
       }
     });
   }, 10);
-  // Salva no localStorage e no Firestore em background
   saveEvents(); 
 });
 
-//function to delete event when clicked on event
 eventsContainer.addEventListener("click", (e) => {
   if (e.target.classList.contains("event")) {
     showConfirm("Tem certeza que deseja excluir este evento?", () => {
@@ -441,7 +394,6 @@ eventsContainer.addEventListener("click", (e) => {
               event.events.splice(index, 1);
             }
           });
-          // Se não houver mais eventos nesse dia, remove o dia do array
           if (event.events.length === 0) {
             eventsArr.splice(eventsArr.indexOf(event), 1);
             const activeDayEl = document.querySelector(".day.active");
@@ -457,7 +409,6 @@ eventsContainer.addEventListener("click", (e) => {
   }
 });
 
-//function to get active day day name and date and update eventday eventdate
 function getActiveDay(date) {
   const day = new Date(year, month, date);
   const dias = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
@@ -466,12 +417,8 @@ function getActiveDay(date) {
   eventDate.innerHTML = date + " " + months[month] + " " + year;
 }
 
-// Salva eventos no localStorage e sincroniza com Firestore
 function saveEvents() {
-  // Salva localmente
   localStorage.setItem("eventsArr", JSON.stringify(eventsArr));
-
-  // Salva no Firestore
   const user = firebase.auth().currentUser;
   if (!user) {
     showError("Usuário não autenticado!");
@@ -489,9 +436,7 @@ function saveEvents() {
     });
 }
 
-// Busca eventos do localStorage ou Firestore
 function getEvents(callback) {
-  // Tenta carregar do localStorage primeiro
   const localData = localStorage.getItem("eventsArr");
   if (localData && localData !== "[]") {
     eventsArr.length = 0;
@@ -503,8 +448,6 @@ function getEvents(callback) {
     if (typeof callback === "function") callback();
     return;
   }
-
-  // Se não houver local, busca do Firestore
   const user = firebase.auth().currentUser;
   if (!user) {
     firebase.auth().onAuthStateChanged(function(user) {
@@ -520,7 +463,6 @@ function getEvents(callback) {
       eventsArr.length = 0;
       if (doc.exists && doc.data().events) {
         eventsArr.push(...doc.data().events);
-        // Salva no localStorage para uso futuro
         localStorage.setItem("eventsArr", JSON.stringify(eventsArr));
       }
       if (typeof callback === "function") callback();
@@ -531,18 +473,14 @@ function getEvents(callback) {
     });
 }
 
-// Limpa o localStorage ao deslogar
 function clearEventsLocalStorage() {
   localStorage.removeItem("eventsArr");
 }
 
-// Limpa o localStorage ao sair da página
 window.addEventListener("beforeunload", () => {
-  // Não limpe o localStorage ao sair da página, só ao deslogar
 });
 
 function convertTime(time) {
-  //convert time to 24 hour format
   let timeArr = time.split(":");
   let timeHour = timeArr[0];
   let timeMin = timeArr[1];
@@ -553,7 +491,6 @@ function convertTime(time) {
 }
 
 function showError(message) {
-  // Crie um elemento de mensagem de erro se ainda não existir
   let errorElement = document.querySelector(".error-message");
   if (!errorElement) {
     errorElement = document.createElement("div");
@@ -563,15 +500,12 @@ function showError(message) {
     errorElement.style.marginTop = "10px";
     document.body.appendChild(errorElement);
   }
-
-  // Defina a mensagem de erro e remova após 3 segundos
   errorElement.innerHTML = message;
   setTimeout(() => {
     errorElement.innerHTML = "";
   }, 3000);
 }
 
-// Supondo que seu botão tenha a classe .close-events
 const closeEventsBtn = document.querySelector('.close-events');
 if (closeEventsBtn) {
   closeEventsBtn.addEventListener('click', function () {
@@ -584,7 +518,7 @@ if (closeEventsBtn) {
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
     getEvents(() => {
-      initCalendar(); // Só inicializa o calendário após carregar os eventos do usuário
+      initCalendar();
     });
   }
 });

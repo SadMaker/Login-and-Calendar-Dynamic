@@ -1,6 +1,5 @@
 function logout(event) {
     event.preventDefault();
-
     firebase.auth().signOut()
         .then(() => {
             localStorage.removeItem("rememberMe");

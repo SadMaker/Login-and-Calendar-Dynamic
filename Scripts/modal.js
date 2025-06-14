@@ -1,9 +1,6 @@
 function showError(message) {
-  // Remove modal antigo se existir
   const oldModal = document.getElementById('error-modal');
   if (oldModal) oldModal.remove();
-
-  // Fundo escuro do modal
   const modal = document.createElement('div');
   modal.id = 'error-modal';
   Object.assign(modal.style, {
@@ -16,8 +13,6 @@ function showError(message) {
     alignItems: 'center',
     zIndex: '10000',
   });
-
-  // Caixa do modal com estilo igual ao .container
   const box = document.createElement('div');
   Object.assign(box.style, {
     background: '#111729',
@@ -31,21 +26,15 @@ function showError(message) {
     maxWidth: '340px',
     textAlign: 'center',
   });
-
-  // Título do modal
   const title = document.createElement('h2');
   title.textContent = 'Erro';
   title.style.marginBottom = '16px';
   title.style.fontSize = '28px';
   title.style.fontWeight = '700';
-
-  // Mensagem do modal
   const msg = document.createElement('p');
   msg.textContent = message;
   msg.style.marginBottom = '24px';
   msg.style.fontSize = '16px';
-
-  // Botão fechar estilizado como .login
   const btn = document.createElement('button');
   btn.textContent = 'Fechar';
   Object.assign(btn.style, {
@@ -73,8 +62,6 @@ function showError(message) {
     btn.style.color = '#333';
   };
   btn.onclick = () => modal.remove();
-
-  // Monta o modal
   box.appendChild(title);
   box.appendChild(msg);
   box.appendChild(btn);
@@ -82,13 +69,9 @@ function showError(message) {
   document.body.appendChild(modal);
 }
 
-
 function showNotification(message, redirectUrl = null) {
-  // Remove modal antigo se existir
   const oldModal = document.getElementById('error-modal');
   if (oldModal) oldModal.remove();
-
-  // Fundo escuro do modal
   const modal = document.createElement('div');
   modal.id = 'error-modal';
   Object.assign(modal.style, {
@@ -101,8 +84,6 @@ function showNotification(message, redirectUrl = null) {
     alignItems: 'center',
     zIndex: '10000',
   });
-
-  // Caixa do modal com estilo igual ao .container
   const box = document.createElement('div');
   Object.assign(box.style, {
     background: '#111729',
@@ -116,21 +97,15 @@ function showNotification(message, redirectUrl = null) {
     maxWidth: '340px',
     textAlign: 'center',
   });
-
-  // Título do modal
   const title = document.createElement('h2');
   title.textContent = 'Aviso';
   title.style.marginBottom = '16px';
   title.style.fontSize = '28px';
   title.style.fontWeight = '700';
-
-  // Mensagem do modal
   const msg = document.createElement('p');
   msg.textContent = message;
   msg.style.marginBottom = '24px';
   msg.style.fontSize = '16px';
-
-  // Botão fechar estilizado como .login
   const btn = document.createElement('button');
   btn.textContent = 'Fechar';
   Object.assign(btn.style, {
@@ -163,8 +138,6 @@ function showNotification(message, redirectUrl = null) {
       window.location.href = redirectUrl;
     }
   };
-
-  // Monta o modal
   box.appendChild(title);
   box.appendChild(msg);
   box.appendChild(btn);
@@ -173,11 +146,8 @@ function showNotification(message, redirectUrl = null) {
 }
 
 function showConfirm(message, onConfirm) {
-  // Remove modal antigo se existir
   const oldModal = document.getElementById('confirm-modal');
   if (oldModal) oldModal.remove();
-
-  // Fundo escuro do modal
   const modal = document.createElement('div');
   modal.id = 'confirm-modal';
   Object.assign(modal.style, {
@@ -190,8 +160,6 @@ function showConfirm(message, onConfirm) {
     alignItems: 'center',
     zIndex: '10000',
   });
-
-  // Caixa do modal (igual ao modal.js)
   const box = document.createElement('div');
   Object.assign(box.style, {
     background: '#111729',
@@ -205,19 +173,13 @@ function showConfirm(message, onConfirm) {
     maxWidth: '340px',
     textAlign: 'center',
   });
-
-  // Mensagem
   const msg = document.createElement('p');
   msg.textContent = message;
   msg.style.marginBottom = '24px';
   msg.style.fontSize = '16px';
-
-  // Botões
   const btns = document.createElement('div');
   btns.style.display = 'flex';
   btns.style.gap = '10px';
-
-  // Botão Cancelar (igual ao botão fechar do modal.js)
   const cancelBtn = document.createElement('button');
   cancelBtn.textContent = 'Cancelar';
   Object.assign(cancelBtn.style, {
@@ -244,8 +206,6 @@ function showConfirm(message, onConfirm) {
     cancelBtn.style.color = '#333';
   };
   cancelBtn.onclick = () => modal.remove();
-
-  // Botão Excluir (igual, mas vermelho)
   const confirmBtn = document.createElement('button');
   confirmBtn.textContent = 'Excluir';
   Object.assign(confirmBtn.style, {
@@ -275,10 +235,8 @@ function showConfirm(message, onConfirm) {
     modal.remove();
     onConfirm();
   };
-
   btns.appendChild(cancelBtn);
   btns.appendChild(confirmBtn);
-
   box.appendChild(msg);
   box.appendChild(btns);
   modal.appendChild(box);
@@ -286,11 +244,8 @@ function showConfirm(message, onConfirm) {
 }
 
 function showExit(message, onExit) {
-  // Remove modal antigo se existir
   const oldModal = document.getElementById('exit-modal');
   if (oldModal) oldModal.remove();
-
-  // Fundo escuro do modal
   const modal = document.createElement('div');
   modal.id = 'exit-modal';
   Object.assign(modal.style, {
@@ -303,8 +258,6 @@ function showExit(message, onExit) {
     alignItems: 'center',
     zIndex: '10000',
   });
-
-  // Caixa do modal (igual ao modal.js)
   const box = document.createElement('div');
   Object.assign(box.style, {
     background: '#111729',
@@ -318,19 +271,13 @@ function showExit(message, onExit) {
     maxWidth: '340px',
     textAlign: 'center',
   });
-
-  // Mensagem
   const msg = document.createElement('p');
   msg.textContent = message;
   msg.style.marginBottom = '24px';
   msg.style.fontSize = '16px';
-
-  // Botões
   const btns = document.createElement('div');
   btns.style.display = 'flex';
   btns.style.gap = '10px';
-
-  // Botão Cancelar
   const cancelBtn = document.createElement('button');
   cancelBtn.textContent = 'Cancelar';
   Object.assign(cancelBtn.style, {
@@ -357,7 +304,6 @@ function showExit(message, onExit) {
     cancelBtn.style.color = '#333';
   };
   cancelBtn.onclick = () => modal.remove();
-
   const exitBtn = document.createElement('button');
   exitBtn.textContent = 'Sair';
   Object.assign(exitBtn.style, {
@@ -387,10 +333,8 @@ function showExit(message, onExit) {
     modal.remove();
     onExit();
   };
-
   btns.appendChild(cancelBtn);
   btns.appendChild(exitBtn);
-
   box.appendChild(msg);
   box.appendChild(btns);
   modal.appendChild(box);

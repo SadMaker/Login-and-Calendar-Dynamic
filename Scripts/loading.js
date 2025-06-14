@@ -9,9 +9,7 @@ function loading(callback){
     div.appendChild(span);
     div.appendChild(span2);
     div.appendChild(span3);
-    
     setTimeout(() => hideloading(callback), 2000 );
-
     function hideloading(callback){
         const classes = document.getElementsByClassName("loading");
         if(classes.length){
