@@ -12,7 +12,7 @@ function login(event) {
     firebase.auth().signInWithEmailAndPassword(email, password).then((response) =>{
         loading(() =>{
             console.log("sucesso", response);
-            window.location.href = "index/pages/home.html";
+            window.location.href = "/index/pages/home.html";
         })
     }).catch(error =>{
         loading(() =>{
@@ -45,6 +45,6 @@ function forget(event){
 firebase.auth().onAuthStateChanged(user => {
     const remember = localStorage.getItem("rememberMe") === "true";
     if (user && remember) {
-        window.location.href = "index/pages/home.html";
+        window.location.href = "/index/pages/home.html";
     }
 });

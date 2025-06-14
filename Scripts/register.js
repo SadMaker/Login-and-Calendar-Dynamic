@@ -19,7 +19,7 @@ function registrar(event) {
     loading(() => {
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(() => {
-                window.location.href = "./home.html";
+                window.location.href = "/index/pages/home.html";
             })
             .catch(error => {
                 console.log(error);
