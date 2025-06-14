@@ -17,24 +17,10 @@ const calendar = document.querySelector(".calendar"),
   addEventTo = document.querySelector(".event-time-to"),
   addEventSubmit = document.querySelector(".add-event-btn ");
 
-// Novos elementos para o modal do código da turma
-const openClassModalBtn = document.getElementById('open-class-modal-btn');
-const classCodeModal = document.getElementById('class-code-modal');
-const classCodeInput = document.getElementById('class-code-input');
-const confirmClassCodeBtn = document.getElementById('confirm-class-code-btn');
-const cancelClassCodeBtn = document.getElementById('cancel-class-code-btn');
-const leaveClassBtn = document.getElementById('leave-class-btn');
-const classCodeError = document.getElementById('class-code-error');
-
-
 let today = new Date();
 let activeDay;
 let month = today.getMonth();
 let year = today.getFullYear();
-
-// Variáveis para o sistema de turmas
-let currentTurmaId = null;
-let isCurrentUserAdmin = false;
 
 const months = [
   "Janeiro",
@@ -55,12 +41,8 @@ const eventsArr = [];
 
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
-    // Carrega primeiro o TurmaId para depois buscar os eventos corretos
-    loadTurmaId(() => {
-      getEvents(() => {
-        initCalendar();
-        updateAdminUI(); // Atualiza a UI com base na turma e admin status
-      });
+    getEvents(() => {
+      initCalendar();
     });
   }
 });
@@ -132,7 +114,7 @@ function initCalendar() {
   }
   daysContainer.innerHTML = days;
   addListner();
-  updateAdminUI(); // Garante que a UI seja atualizada ao mudar mês/ano
+
   isFirstLoad = false;
 }
 
@@ -308,10 +290,6 @@ addEventTo.addEventListener("input", (e) => {
 });
 
 addEventSubmit.addEventListener("click", () => {
-  if (currentTurmaId && !isCurrentUserAdmin) {
-    showError("Você não tem permissão para adicionar eventos nesta turma.");
-    return;
-  }
   const eventTitle = addEventTitle.value;
   const eventTimeFrom = addEventFrom.value;
   const eventTimeTo = addEventTo.value;
@@ -428,10 +406,6 @@ addEventSubmit.addEventListener("click", () => {
 
 eventsContainer.addEventListener("click", (e) => {
   if (e.target.classList.contains("event")) {
-    if (currentTurmaId && !isCurrentUserAdmin) {
-      showError("Você não tem permissão para excluir eventos nesta turma.");
-      return;
-    }
     showConfirm("Tem certeza que deseja excluir este evento?", () => {
       const eventTitle = e.target.children[0].children[1].innerHTML;
       eventsArr.forEach((event) => {
@@ -469,102 +443,49 @@ function getActiveDay(date) {
 }
 
 function saveEvents() {
+  localStorage.setItem("eventsArr", JSON.stringify(eventsArr));
   const user = firebase.auth().currentUser;
   if (!user) {
     showError("Usuário não autenticado!");
     return;
   }
-
-  if (currentTurmaId) {
-    if (!isCurrentUserAdmin) {
-      showError("Você não tem permissão para salvar eventos nesta turma.");
-      return;
-    }
-    firebase.firestore()
-      .collection("turmas")
-      .doc(currentTurmaId)
-      .set({ events: eventsArr }, { merge: true })
-      .then(() => {
-        console.log(`Eventos da turma ${currentTurmaId} salvos no Firestore!`);
-      })
-      .catch((error) => {
-        showError("Erro ao salvar eventos da turma no Firestore: " + error.message);
-      });
-  } else {
-    // Salvar eventos pessoais
-    localStorage.setItem("eventsArr", JSON.stringify(eventsArr));
-    firebase.firestore()
-      .collection("events")
-      .doc(user.uid)
-      .set({ events: eventsArr })
-      .then(() => {
-        console.log("Eventos pessoais salvos no Firestore!");
-      })
-      .catch((error) => {
-        showError("Erro ao salvar eventos pessoais no Firestore: " + error.message);
-      });
-  }
+  firebase.firestore()
+    .collection("events")
+    .doc(user.uid)
+    .set({ events: eventsArr })
+    .then(() => {
+      console.log("Eventos salvos no Firestore!");
+    })
+    .catch((error) => {
+      showError("Erro ao salvar eventos no Firestore: " + error.message);
+    });
 }
 
 function getEvents(callback) {
-  const user = firebase.auth().currentUser;
-  if (!user) {
-    firebase.auth().onAuthStateChanged(function(userAuth) {
-      if (userAuth) getEvents(callback);
-      else if (typeof callback === "function") callback(); // Chama callback mesmo se não houver usuário para não bloquear initCalendar
-    });
-    return;
-  }
-
-  eventsArr.length = 0; // Limpa array de eventos antes de buscar novos
-
-  if (currentTurmaId) {
-    // Buscar eventos da turma
-    firebase.firestore()
-      .collection("turmas")
-      .doc(currentTurmaId)
-      .get()
-      .then((doc) => {
-        if (doc.exists && doc.data().events) {
-          eventsArr.push(...doc.data().events);
-        } else if (doc.exists && !doc.data().events) {
-          console.log(`Turma ${currentTurmaId} não possui eventos.`);
-        } else {
-          showError(`Código da turma "${currentTurmaId}" inválido ou turma não encontrada.`);
-          localStorage.removeItem('turmaId'); 
-          currentTurmaId = null; 
-          getPersonalEvents(user.uid, callback);
-          return; 
-        }
-        if (typeof callback === "function") callback();
-      })
-      .catch((error) => {
-        showError("Erro ao carregar eventos da turma do Firestore: " + error.message);
-        if (typeof callback === "function") callback();
-      });
-  } else {
-    // Buscar eventos pessoais
-    getPersonalEvents(user.uid, callback);
-  }
-}
-
-function getPersonalEvents(userId, callback) {
   const localData = localStorage.getItem("eventsArr");
   if (localData && localData !== "[]") {
+    eventsArr.length = 0;
     try {
       eventsArr.push(...JSON.parse(localData));
     } catch (e) {
-      localStorage.removeItem("eventsArr"); // Limpa dados inválidos
+      localStorage.removeItem("eventsArr");
     }
     if (typeof callback === "function") callback();
-    return; // Retorna se carregou do localStorage
+    return;
   }
-
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) getEvents(callback);
+    });
+    return;
+  }
   firebase.firestore()
     .collection("events")
-    .doc(userId)
+    .doc(user.uid)
     .get()
     .then((doc) => {
+      eventsArr.length = 0;
       if (doc.exists && doc.data().events) {
         eventsArr.push(...doc.data().events);
         localStorage.setItem("eventsArr", JSON.stringify(eventsArr));
@@ -572,230 +493,57 @@ function getPersonalEvents(userId, callback) {
       if (typeof callback === "function") callback();
     })
     .catch((error) => {
-      showError("Erro ao carregar eventos pessoais do Firestore: " + error.message);
+      showError("Erro ao carregar eventos do Firestore: " + error.message);
       if (typeof callback === "function") callback();
     });
 }
 
-// Funções para o sistema de turmas
-
-function showError(message, isClassCodeError = false) {
-  if (isClassCodeError && classCodeError) {
-    classCodeError.textContent = message;
-    classCodeError.style.display = 'block';
-  } else {
-    // Reutilizar o modal de erro existente ou criar um novo se necessário
-    // Por enquanto, usando alert para simplificar, mas idealmente usar um modal
-    alert(message);
-  }
+function clearEventsLocalStorage() {
+  localStorage.removeItem("eventsArr");
 }
 
-function clearClassCodeError() {
-  if (classCodeError) {
-    classCodeError.textContent = '';
-    classCodeError.style.display = 'none';
-  }
-}
-
-function loadTurmaId(callback) {
-  const user = firebase.auth().currentUser;
-  if (!user) {
-    if (typeof callback === "function") callback();
-    return;
-  }
-
-  currentTurmaId = localStorage.getItem('turmaId');
-  if (currentTurmaId) {
-    console.log(`Turma ID ${currentTurmaId} carregado do localStorage.`);
-    checkAdminStatus(currentTurmaId, callback); 
-  } else {
-    firebase.firestore().collection('users').doc(user.uid).get().then(doc => {
-      if (doc.exists && doc.data().turmaId) {
-        currentTurmaId = doc.data().turmaId;
-        localStorage.setItem('turmaId', currentTurmaId); 
-        console.log(`Turma ID ${currentTurmaId} carregado do perfil do Firebase.`);
-        checkAdminStatus(currentTurmaId, callback);
-      } else {
-        console.log("Nenhum Turma ID no localStorage ou perfil do Firebase.");
-        isCurrentUserAdmin = false; // Garante que não é admin se não há turma
-        if (typeof callback === "function") callback();
-      }
-    }).catch(error => {
-      showError("Erro ao carregar Turma ID do perfil: " + error.message);
-      isCurrentUserAdmin = false;
-      if (typeof callback === "function") callback();
-    });
-  }
-}
-
-function checkAdminStatus(turmaId, callback) {
-  const user = firebase.auth().currentUser;
-  if (!user || !turmaId) {
-    isCurrentUserAdmin = false;
-    updateAdminUI();
-    if (typeof callback === "function") callback();
-    return;
-  }
-
-  firebase.firestore().collection('turmas').doc(turmaId).get().then(doc => {
-    if (doc.exists) {
-      const turmaData = doc.data();
-      if (turmaData.admins && turmaData.admins.includes(user.uid)) {
-        isCurrentUserAdmin = true;
-        console.log("Usuário é admin da turma.");
-      } else {
-        isCurrentUserAdmin = false;
-        console.log("Usuário NÃO é admin da turma.");
-      }
-    } else {
-      isCurrentUserAdmin = false;
-      console.log(`Turma ${turmaId} não encontrada para verificar status de admin.`);
-    }
-    updateAdminUI(); 
-    if (typeof callback === "function") callback();
-  }).catch(error => {
-    showError("Erro ao verificar status de admin: " + error.message);
-    isCurrentUserAdmin = false;
-    updateAdminUI();
-    if (typeof callback === "function") callback();
-  });
-}
-
-function joinTurma() {
-  clearClassCodeError();
-  const turmaIdToJoin = classCodeInput.value.trim();
-  if (!turmaIdToJoin) {
-    showError("Por favor, insira um código de turma.", true);
-    return;
-  }
-
-  const user = firebase.auth().currentUser;
-  if (!user) {
-    showError("Usuário não autenticado. Faça login para entrar em uma turma.", true);
-    return;
-  }
-
-  // Verificar se a turma existe
-  firebase.firestore().collection('turmas').doc(turmaIdToJoin).get().then(doc => {
-    if (doc.exists) {
-      currentTurmaId = turmaIdToJoin;
-      localStorage.setItem('turmaId', currentTurmaId);
-      // Salvar no perfil do usuário do Firebase
-      firebase.firestore().collection('users').doc(user.uid).set({ turmaId: currentTurmaId }, { merge: true })
-      .then(() => {
-        console.log(`Turma ID ${currentTurmaId} salvo no perfil do usuário.`);
-        // Após entrar na turma, verificar status de admin e recarregar eventos
-        checkAdminStatus(currentTurmaId, () => {
-          getEvents(() => {
-            initCalendar(); // Reinicializa o calendário com os novos eventos
-            updateAdminUI();
-          });
-        });
-        classCodeModal.style.display = 'none';
-        classCodeInput.value = ''; // Limpa o input
-      }).catch(error => {
-        showError("Erro ao salvar Turma ID no perfil: " + error.message, true);
-      });
-    } else {
-      showError("Código da turma inválido ou turma não encontrada.", true);
-      currentTurmaId = null; // Garante que não usa um ID inválido
-      isCurrentUserAdmin = false;
-      localStorage.removeItem('turmaId');
-      // Limpar turmaId do perfil do usuário também
-      firebase.firestore().collection('users').doc(user.uid).set({ turmaId: null }, { merge: true });
-      updateAdminUI();
-      getEvents(initCalendar); // Recarrega eventos (pessoais)
-    }
-  }).catch(error => {
-    showError("Erro ao verificar turma: " + error.message, true);
-  });
-}
-
-function leaveTurma() {
-  const user = firebase.auth().currentUser;
-  if (!user) {
-    showError("Usuário não autenticado.");
-    return;
-  }
-
-  currentTurmaId = null;
-  isCurrentUserAdmin = false;
-  localStorage.removeItem('turmaId');
-  // Remover do perfil do usuário do Firebase
-  firebase.firestore().collection('users').doc(user.uid).set({ turmaId: null }, { merge: true })
-  .then(() => {
-    console.log("Turma ID removido do perfil do usuário.");
-    updateAdminUI();
-    getEvents(() => { // Carrega eventos pessoais
-      initCalendar();
-    });
-    classCodeModal.style.display = 'none';
-  }).catch(error => {
-    showError("Erro ao remover Turma ID do perfil: " + error.message);
-  });
-}
-
-function updateAdminUI() {
-  const user = firebase.auth().currentUser;
-  if (!user) { // Se não há usuário, esconde tudo relacionado a turmas e adição de eventos
-    addEventBtn.style.display = 'none';
-    if(openClassModalBtn) openClassModalBtn.style.display = 'none';
-    if(leaveClassBtn) leaveClassBtn.style.display = 'none';
-    return;
-  }
-
-  if(openClassModalBtn) openClassModalBtn.style.display = 'inline-block'; // Sempre mostra o botão de entrar/trocar
-
-  if (currentTurmaId) {
-    if(openClassModalBtn) openClassModalBtn.textContent = 'Trocar/Ver Turma';
-    if(leaveClassBtn) leaveClassBtn.style.display = 'inline-block';
-    if (isCurrentUserAdmin) {
-      addEventBtn.style.display = 'flex'; // Ou o display original do botão
-    } else {
-      addEventBtn.style.display = 'none';
-    }
-  } else {
-    // Calendário pessoal
-    addEventBtn.style.display = 'flex'; // Ou o display original
-    if(openClassModalBtn) openClassModalBtn.textContent = 'Entrar na Turma';
-    if(leaveClassBtn) leaveClassBtn.style.display = 'none';
-  }
-}
-
-
-// Listeners para o modal de código da turma
-if (openClassModalBtn) {
-  openClassModalBtn.addEventListener('click', () => {
-    clearClassCodeError();
-    classCodeModal.style.display = 'block';
-    // Preenche o input com o código da turma atual, se houver
-    classCodeInput.value = currentTurmaId || '';
-  });
-}
-
-if (cancelClassCodeBtn) {
-  cancelClassCodeBtn.addEventListener('click', () => {
-    classCodeModal.style.display = 'none';
-    clearClassCodeError();
-  });
-}
-
-if (confirmClassCodeBtn) {
-  confirmClassCodeBtn.addEventListener('click', joinTurma);
-}
-
-if (leaveClassBtn) {
-  leaveClassBtn.addEventListener('click', leaveTurma);
-}
-
-// Fechar modal se clicar fora dele
-window.addEventListener('click', (event) => {
-  if (event.target == classCodeModal) {
-    classCodeModal.style.display = 'none';
-    clearClassCodeError();
-  }
+window.addEventListener("beforeunload", () => {
 });
 
-// Chamar updateAdminUI inicialmente também, caso o usuário já esteja logado e a turma carregada
-// Isso é coberto pela chamada em loadTurmaId e initCalendar
-// updateAdminUI();
+function convertTime(time) {
+  let timeArr = time.split(":");
+  let timeHour = timeArr[0];
+  let timeMin = timeArr[1];
+  let timeFormat = timeHour >= 12 ? "PM" : "AM";
+  timeHour = timeHour % 12 || 12;
+  time = timeHour + ":" + timeMin + " " + timeFormat;
+  return time;
+}
+
+function showError(message) {
+  let errorElement = document.querySelector(".error-message");
+  if (!errorElement) {
+    errorElement = document.createElement("div");
+    errorElement.className = "error-message";
+    errorElement.style.color = "red";
+    errorElement.style.fontSize = "14px";
+    errorElement.style.marginTop = "10px";
+    document.body.appendChild(errorElement);
+  }
+  errorElement.innerHTML = message;
+  setTimeout(() => {
+    errorElement.innerHTML = "";
+  }, 3000);
+}
+
+const closeEventsBtn = document.querySelector('.close-events');
+if (closeEventsBtn) {
+  closeEventsBtn.addEventListener('click', function () {
+    showExit("Tem certeza que deseja sair?", () => {
+        logout(event);
+    });
+  });
+}
+
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    getEvents(() => {
+      initCalendar();
+    });
+  }
+});
