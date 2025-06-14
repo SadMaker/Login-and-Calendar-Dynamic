@@ -294,11 +294,11 @@ addEventSubmit.addEventListener("click", () => {
   const eventTitle = addEventTitle.value;
   const eventTimeFrom = addEventFrom.value;
   const eventTimeTo = addEventTo.value;
+
   if (eventTitle === ""){
     showError("Por favor, nomeie o evento");
     return;
   }
-
   if (eventTimeFrom) {
     const timeFromArr = eventTimeFrom.split(":");
     if (
@@ -321,6 +321,7 @@ addEventSubmit.addEventListener("click", () => {
       return;
     }
   }
+
   const timeFrom = eventTimeFrom ? convertTime(eventTimeFrom) : "";
   const timeTo = eventTimeTo ? convertTime(eventTimeTo) : "";
 
@@ -338,10 +339,12 @@ addEventSubmit.addEventListener("click", () => {
       });
     }
   });
+
   if (eventExist) {
     showError("Evento já adicionado");
     return;
   }
+
   let timeText = "";
   if (timeFrom && timeTo) {
     timeText = timeFrom + " - " + timeTo;
@@ -355,6 +358,7 @@ addEventSubmit.addEventListener("click", () => {
     title: eventTitle,
     time: timeText,
   };
+
   let eventAdded = false;
   if (eventsArr.length > 0) {
     eventsArr.forEach((item) => {
@@ -368,6 +372,7 @@ addEventSubmit.addEventListener("click", () => {
       }
     });
   }
+
   if (!eventAdded) {
     eventsArr.push({
       day: activeDay,
@@ -381,29 +386,25 @@ addEventSubmit.addEventListener("click", () => {
   addEventTitle.value = "";
   addEventFrom.value = "";
   addEventTo.value = "";
-  updateEvents(activeDay);
 
-  // Remover classe 'active' de todos os dias
-  const days = document.querySelectorAll(".day");
-  days.forEach((day) => {
-    day.classList.remove("active");
-  });
+  updateEvents(activeDay); // Atualiza a lista de eventos exibida para o dia ativo
 
-  // Adicionar classe 'active' apenas ao dia selecionado
-  days.forEach((day) => {
+  // Encontrar o elemento do dia ativo no DOM e adicionar a classe 'event'
+  // para que o CSS possa aplicar o estilo da barrinha.
+  const daysInDOM = document.querySelectorAll(".days .day");
+  daysInDOM.forEach((dayElement) => {
     if (
-      !day.classList.contains("prev-date") &&
-      !day.classList.contains("next-date") &&
-      Number(day.textContent) === activeDay
+      !dayElement.classList.contains("prev-date") &&
+      !dayElement.classList.contains("next-date") &&
+      Number(dayElement.textContent) === activeDay
     ) {
-      day.classList.add("active");
+      if (!dayElement.classList.contains("event")) {
+        dayElement.classList.add("event");
+      }
     }
   });
 
-  // Remova ou comente o initCalendar()
-  // initCalendar();
-
-  saveEvents(); 
+  saveEvents(); // Salva no Firebase e localStorage. Não chama initCalendar.
 });
 
 eventsContainer.addEventListener("click", (e) => {
