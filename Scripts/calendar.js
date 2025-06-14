@@ -366,16 +366,27 @@ addEventSubmit.addEventListener("click", () => {
   addEventFrom.value = "";
   addEventTo.value = "";
   updateEvents(activeDay);
-  const prevActiveDay = activeDay;
-  initCalendar();
-  setTimeout(() => {
-    const days = document.querySelectorAll(".day");
-    days.forEach((day) => {
-      if (Number(day.textContent) === prevActiveDay && !day.classList.contains("prev-date") && !day.classList.contains("next-date")) {
-        day.classList.add("active");
-      }
-    });
-  }, 10);
+
+  // Remover classe 'active' de todos os dias
+  const days = document.querySelectorAll(".day");
+  days.forEach((day) => {
+    day.classList.remove("active");
+  });
+
+  // Adicionar classe 'active' apenas ao dia selecionado
+  days.forEach((day) => {
+    if (
+      !day.classList.contains("prev-date") &&
+      !day.classList.contains("next-date") &&
+      Number(day.textContent) === activeDay
+    ) {
+      day.classList.add("active");
+    }
+  });
+
+  // Remova ou comente o initCalendar()
+  // initCalendar();
+
   saveEvents(); 
 });
 
