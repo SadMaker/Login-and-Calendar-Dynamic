@@ -1,26 +1,31 @@
 firebase.auth().onAuthStateChanged(user => {
+    const nonAuthPages = ["/index.html", "/index/pages/register.html", "/index/pages/recuperation.html"];
+    
+    const isCurrentlyOnNonAuthPage = nonAuthPages.some(pagePath => {
+        if (pagePath === "/index.html") {
+            return window.location.pathname === "/" || window.location.pathname.endsWith("/index.html") || window.location.pathname.endsWith("index.html");
+        }
+        return window.location.pathname.endsWith(pagePath);
+    });
+
+    const isCurrentlyOnHomePage = window.location.pathname.endsWith("/index/pages/home.html") || window.location.pathname.endsWith("/home.html");
+
     if (user) {
         const rememberMe = localStorage.getItem("rememberMe") === "true";
-        const isNotHomePage = !window.location.pathname.endsWith("index/pages/home.html") && !window.location.pathname.endsWith("home.html");
 
-        if (!rememberMe && isNotHomePage) {
+        if (isCurrentlyOnNonAuthPage && !isCurrentlyOnHomePage) {
+            window.location.href = "/index/pages/home.html";
+        } else if (!rememberMe && !isCurrentlyOnHomePage && !isCurrentlyOnNonAuthPage) {
             firebase.auth().signOut().then(() => {
-                console.log("Usuário deslogado porque rememberMe é falso e não está na home.");
-                // window.location.href = "/index.html"; 
+                console.log("Usuário deslogado: rememberMe é falso, não está na home e não está em página de não-autenticação.");
             }).catch(error => {
                 console.error("Erro ao deslogar usuário:", error);
             });
         }
-    } else {
-        const nonAuthPages = ["/index.html", "/index/pages/register.html", "/index/pages/recuperation.html"];
-        const isNonAuthPage = nonAuthPages.some(page => window.location.pathname.endsWith(page));
-        
-        const isHomePage = window.location.pathname.endsWith("index/pages/home.html") || window.location.pathname.endsWith("home.html");
 
-        if (!isNonAuthPage && !isHomePage) {
+    } else {
+        if (!isCurrentlyOnNonAuthPage) {
              window.location.href = "/index.html";
-        } else if (isHomePage) {
-            window.location.href = "/index.html";
         }
     }
 });
