@@ -32,7 +32,7 @@ function forget(event){
     else{
         loading(() => {
             firebase.auth().sendPasswordResetEmail(email).then(() =>{
-            showNotification("Enviamos um email para recuperação de senha.", "../index.html");
+            showNotification("Enviamos um email para recuperação de senha.", "/index.html");
             
         }).catch(error => {
                 console.log("erro", error);
