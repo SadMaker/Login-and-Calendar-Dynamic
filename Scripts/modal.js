@@ -3,6 +3,9 @@ function showError(message) {
   if (oldModal) oldModal.remove();
   const modal = document.createElement('div');
   modal.id = 'error-modal';
+  const bodyZoom = parseFloat(getComputedStyle(document.body).zoom);
+  const modalZoom = (bodyZoom && bodyZoom !== 1) ? (1 / bodyZoom).toString() : '1';
+
   Object.assign(modal.style, {
     position: 'fixed',
     top: '0', left: '0',
@@ -12,6 +15,7 @@ function showError(message) {
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: '10000',
+    zoom: modalZoom,
   });
   const box = document.createElement('div');
   Object.assign(box.style, {
@@ -74,6 +78,9 @@ function showNotification(message, redirectUrl = null) {
   if (oldModal) oldModal.remove();
   const modal = document.createElement('div');
   modal.id = 'error-modal';
+  const bodyZoom = parseFloat(getComputedStyle(document.body).zoom);
+  const modalZoom = (bodyZoom && bodyZoom !== 1) ? (1 / bodyZoom).toString() : '1';
+
   Object.assign(modal.style, {
     position: 'fixed',
     top: '0', left: '0',
@@ -83,6 +90,7 @@ function showNotification(message, redirectUrl = null) {
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: '10000',
+    zoom: modalZoom,
   });
   const box = document.createElement('div');
   Object.assign(box.style, {
@@ -140,6 +148,9 @@ function showConfirm(message, onConfirm) {
   if (oldModal) oldModal.remove();
   const modal = document.createElement('div');
   modal.id = 'confirm-modal';
+  const bodyZoom = parseFloat(getComputedStyle(document.body).zoom);
+  const modalZoom = (bodyZoom && bodyZoom !== 1) ? (1 / bodyZoom).toString() : '1';
+
   Object.assign(modal.style, {
     position: 'fixed',
     top: '0', left: '0',
@@ -149,6 +160,7 @@ function showConfirm(message, onConfirm) {
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: '10000',
+    zoom: modalZoom,
   });
   const box = document.createElement('div');
   Object.assign(box.style, {
@@ -238,6 +250,9 @@ function showExit(message, onExit) {
   if (oldModal) oldModal.remove();
   const modal = document.createElement('div');
   modal.id = 'exit-modal';
+  const bodyZoom = parseFloat(getComputedStyle(document.body).zoom);
+  const modalZoom = (bodyZoom && bodyZoom !== 1) ? (1 / bodyZoom).toString() : '1';
+
   Object.assign(modal.style, {
     position: 'fixed',
     top: '0', left: '0',
@@ -247,6 +262,7 @@ function showExit(message, onExit) {
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: '10000',
+    zoom: modalZoom,
   });
   const box = document.createElement('div');
   Object.assign(box.style, {

@@ -19,6 +19,7 @@
   border-radius: 50px;
 }
 body {
+  zoom: 0.75;
   position: relative;
   min-height: 100vh;
   display: flex;
