@@ -1,7 +1,6 @@
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
         const rememberMe = localStorage.getItem("rememberMe") === "true";
-        // Verifica se a URL atual NÃO termina com "index/pages/home.html"
         const isNotHomePage = !window.location.pathname.endsWith("index/pages/home.html") && !window.location.pathname.endsWith("home.html");
 
         if (!rememberMe && isNotHomePage) {
