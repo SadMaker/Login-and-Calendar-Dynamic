@@ -1,12 +1,16 @@
-// Limpa cookies se rememberMe for false e não estiver na home.html
+// Limpa cookies se rememberMe for false e não estiver na home.html ou index.html
 (function() {
     const rememberMe = localStorage.getItem("rememberMe");
-    const isHome = window.location.pathname.endsWith("/home.html");
-    if (rememberMe === "false" && !isHome) {
+    const path = window.location.pathname;
+    const isHome = path.endsWith("/home.html");
+    const isIndex = path.endsWith("/index.html") || path === "/";
+    if (rememberMe === "false" && !isHome && !isIndex && document.cookie) {
         // Apaga todos os cookies
         document.cookie.split(";").forEach(function(c) {
             document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date(0).toUTCString() + ";path=/");
         });
+        // Redireciona para login após limpar cookies
+        window.location.href = "/index.html";
     }
 })();
 
